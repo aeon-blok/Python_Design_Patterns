@@ -4,6 +4,7 @@ import sys
 
 # region Factory Method
 
+
 # Product (interface)
 class Product(ABC):
     """Interface For Concrete Products"""
@@ -11,7 +12,7 @@ class Product(ABC):
     def object_info(self):
         """Collects Info about the Current Class and Functions dynamically using Inspect Module"""
         cls = self.__class__
-        func_name = inspect.currentframe().f_back.f_code.co_name #type: ignore
+        func_name = inspect.currentframe().f_back.f_code.co_name  # type: ignore
         return f"Class Name: {cls.__name__}: This Method is: {func_name}"
 
     @abstractmethod
@@ -32,10 +33,11 @@ class ConcreteProductA(Product):
 
     def func_b(self):  # type: ignore
         return self.object_info()
-    
+
 
 class ConcreteProductB(Product):
     """Concrete Product B Implementation"""
+
     def func_a(self):  # type: ignore
         return self.object_info()
 
@@ -45,7 +47,8 @@ class ConcreteProductB(Product):
 
 # Creator (interface)
 class Creator(ABC):
-    """ Interface for Concrete Creators"""
+    """Interface for Concrete Creators"""
+
     @abstractmethod
     def factory_method(self) -> Product:
         """Factory Method - Used to choose which Concrete Product to implement inside Concrete Creator Classes."""
@@ -61,21 +64,24 @@ class Creator(ABC):
 # Concrete Creators
 class ConcreteCreatorA(Creator):
     """Concrete Creator A Implementation"""
+
     def factory_method(self) -> Product:
         return ConcreteProductA()
 
 
 class ConcreteCreatorB(Creator):
     """Concrete Creator B Implementation"""
+
     def factory_method(self) -> Product:
         return ConcreteProductB()
+
 
 # endregion
 
 
-
 # region Client Facing Code
 # --- Client Facing Code Usage ---
+
 
 def dependency_injector(concrete_creator: Creator):
     print(concrete_creator.func_a())
