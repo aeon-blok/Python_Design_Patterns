@@ -62,10 +62,10 @@ def main():
     clone = test_class.clone()
 
     # needs to be the actual attribute name not a getter property
-    include_list_clone = test_class.clone(include=["attr_a"]) 
+    include_list_clone = test_class.clone(include=["_attr_a"]) 
 
     # needs to be the actual attribute name not a getter property
-    exclude_list_clone = test_class.clone(exclude=["attr_a"])  
+    exclude_list_clone = test_class.clone(exclude=["_attr_a"])  
 
     # Check they are different objects.
     print(f"Object: {test_class.__class__.__qualname__} at Memory Address: {hex(id(test_class))}")
@@ -75,10 +75,14 @@ def main():
     print(f"Clone: {clone.__class__.__qualname__}: {clone.attr_a}, {clone.attr_b}, {clone.attr_c}, {clone.attr_d}")
 
     # check the attributes of the clone via inclusion list. (will only have the attributes on the inclusion list.)
-    print(f"Clone With Inclusion List: {include_list_clone.__class__.__qualname__}: {clone.attr_a}")
+    print(
+        f"Clone With Inclusion List: {include_list_clone.__class__.__qualname__}: {include_list_clone.attr_a}"
+    )
 
     # check the attributes of the clone via exclusion list. (will only have the attributes NOT on the exclusion list)
-    print(f"Clone With Exclusion List: {exclude_list_clone.__class__.__qualname__}: {clone.attr_b}, {clone.attr_c}, {clone.attr_d}")
+    print(
+        f"Clone With Exclusion List: {exclude_list_clone.__class__.__qualname__}: {exclude_list_clone.attr_b}, {exclude_list_clone.attr_c}, {exclude_list_clone.attr_d}"
+    )
 
 
 if __name__ == "__main__":
