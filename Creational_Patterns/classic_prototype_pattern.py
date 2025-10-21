@@ -5,13 +5,13 @@ import copy
 class Prototype:
     """Clones an Exisiting Class, with the ability to Include and Exclude Specific User Defined Attributes."""
 
-    def filter_attributes(self, include=None, exclude=None):
+    def _filter_attributes(self, include=None, exclude=None):
         """Helper Method - Logic For Inclusion & Exclusion lists. Can Exclude or Whitelist Attributes to clone from the original class."""
         clone = copy.deepcopy(self)
         attributes = set(vars(clone).keys())  # all the current attributes in a set{}
 
         if include is not None:
-            # keeps attributes on the include list and removes the rest.
+            # removes attributes not on include list..
             delete_list = attributes - set(include)  
         elif exclude is not None:
             # Set Intersection - keeps items on the exclude list to delete.
@@ -24,7 +24,7 @@ class Prototype:
         return clone
 
     def clone(self, include=None, exclude=None):
-        return self.filter_attributes(include=include, exclude=exclude)
+        return self._filter_attributes(include=include, exclude=exclude)
 
 
 # Concrete Prototype (inherits from prototype) -- this is your target class. (can be anything)
