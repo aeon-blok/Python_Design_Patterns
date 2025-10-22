@@ -31,6 +31,7 @@ class ConcreteAsyncSubjectA(AsyncSubject):
         self._observers: List[AsyncObserver] = []
         self._state = None
         self._name = name
+        self._lock = asyncio.Lock() # for thread safety
 
     @property
     def state(self):
@@ -41,12 +42,14 @@ class ConcreteAsyncSubjectA(AsyncSubject):
         return self._name
     
     async def attach(self, observer: "AsyncObserver") -> None:
-        if observer not in self._observers:
-            self._observers.append(observer)    
+        async with self._lock:
+            if observer not in self._observers:
+                self._observers.append(observer)    
 
     async def detach(self, observer: "AsyncObserver") -> None:
-        if observer in self._observers:
-            self._observers.remove(observer)
+        async with self._lock:
+            if observer in self._observers:
+                self._observers.remove(observer)
 
     async def _notify(self) -> None:
         # * operator unpacks the generator into separate positional arguments for asyncio.gather
