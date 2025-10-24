@@ -36,22 +36,21 @@ class PullSubject(ABC):
 
 
 # Concrete Subject
-
 class ConcreteSubjectPull(PullSubject):
     """Subject Or Publisher: Notifies Observers of State Changes and allows them to react as desired."""
 
     def __init__(self) -> None:
-        self._observers: List[ObserverPull] = []
+        # use a set for better Big O Time Complexity
+        self._observers: set[ObserverPull] = set() 
         self._state: State = State.STATE_A
 
     def attach(self, observer: "ObserverPull") -> None:
         """registers an Observer to the Subject"""
-        self._observers.append(observer)
+        self._observers.add(observer)  # 0(1) - time complexty
 
     def detach(self, observer: "ObserverPull") -> None:
         """Unregisters an Observer"""
-        if observer in self._observers:
-            self._observers.remove(observer)
+        self._observers.discard(observer)   # 0(1) - time complexty
 
     def _notify(self) -> None:
         """Notifies all the registered observers of a state change. Via PULL Model"""
@@ -80,7 +79,6 @@ class ObserverPull(ABC):
 
 
 # Concrete Observers
-
 class ConcreteObserverPull(ObserverPull):
     """Observer or Subscriber: reacts to state change with behavioural logic."""
 
@@ -109,8 +107,6 @@ class ConcreteObserverPullC(ObserverPull):
 
 
 # Main --- User Facing Code ---
-
-
 def main():
 
     # initialize Subject

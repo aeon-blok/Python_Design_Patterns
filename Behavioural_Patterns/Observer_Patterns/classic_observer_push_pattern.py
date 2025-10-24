@@ -40,17 +40,16 @@ class ConcreteSubjectPush(PushSubject):
     """Subject Or Publisher: Notifies Observers of State Changes and allows them to react as desired."""
 
     def __init__(self) -> None:
-        self._observers: List[ObserverPush] = []
+        self._observers: set[ObserverPush] = set()
         self._state: State = State.STATE_A
 
     def attach(self, observer: "ObserverPush") -> None:
         """registers an Observer to the Subject"""
-        self._observers.append(observer)
+        self._observers.add(observer)
 
     def detach(self, observer: "ObserverPush") -> None:
         """Unregisters an Observer"""
-        if observer in self._observers:
-            self._observers.remove(observer)
+        self._observers.discard(observer)  # 0(1) - time complexty
 
     def _notify(self) -> None:
         """Notifies all the registered observers of a state change. Via PUSH Model"""

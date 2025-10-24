@@ -28,7 +28,7 @@ class AsyncSubject(ABC):
 class ConcreteAsyncSubjectA(AsyncSubject):
 
     def __init__(self, name: str) -> None:
-        self._observers: List[AsyncObserver] = []
+        self._observers: set[AsyncObserver] = set()
         self._state = None
         self._name = name
         self._lock = asyncio.Lock() # for thread safety
@@ -40,16 +40,14 @@ class ConcreteAsyncSubjectA(AsyncSubject):
     @property
     def name(self):
         return self._name
-    
+
     async def attach(self, observer: "AsyncObserver") -> None:
         async with self._lock:
-            if observer not in self._observers:
-                self._observers.append(observer)    
+            self._observers.add(observer)    
 
     async def detach(self, observer: "AsyncObserver") -> None:
         async with self._lock:
-            if observer in self._observers:
-                self._observers.remove(observer)
+            self._observers.discard(observer)  # 0(1) - time complexty
 
     async def _notify(self) -> None:
         # * operator unpacks the generator into separate positional arguments for asyncio.gather
@@ -57,9 +55,9 @@ class ConcreteAsyncSubjectA(AsyncSubject):
         results = await asyncio.gather(*(observer.update(self) for observer in self._observers), return_exceptions=True)
 
         # basic async error handling
-        for item, result in enumerate(results):
+        for observer, result in zip(self._observers, results):
             if isinstance(result, Exception):
-                print(f"Error: Observer {self._observers[item]} failed: {result}")
+                print(f"Error: Observer {observer} failed: {result}")
 
     async def set_state(self, state) -> None:
         self._state = state
