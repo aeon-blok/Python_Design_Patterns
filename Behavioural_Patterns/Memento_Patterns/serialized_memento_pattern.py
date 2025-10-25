@@ -479,10 +479,10 @@ def main():
 
         caretaker.display_history_log()
 
-    # simple_originator_test()
+    simple_originator_test()
     print(f"-------------------------------------------")
     print(f"-------------------------------------------")
-    # nested_originator_test()
+    nested_originator_test()
     nest_test_b()
 
 if __name__ == "__main__":
