@@ -139,6 +139,7 @@ class Caretaker:
 
     def __init__(self, originator: Originator) -> None:
         self._originator = originator
+        
         self._undo_stack: List[Memento] = []
         self._redo_stack: List[Memento] = []
 
@@ -172,72 +173,9 @@ class Caretaker:
 
 # Main --- Client Facing Code ---
 def main():
+    pass
 
-    # small demo
-    character = Originator(
-        player="The Adventurer",
-        hp=100,
-        damage=40,
-        type="Warrior",
-        weapon="Longsword",
-        armour="Chestplate",
-    )
-    environment = Originator(
-        name="Arakan Desert", biome="Desert", size="Large", weather="sunny"
-    )
-    enemy = Originator(
-        name="Vulcatraz",
-        hp=100,
-        damage=25,
-        type="Harpy Eagle",
-        weapon="Claws",
-        armour="magic amulet",
-    )
-    # nested Objects work correctly.
-    game = Originator(character=character, environment=environment, enemy=enemy)
-    game_history = Caretaker(game)
-    game_history.save()
 
-    print(
-        f"{game.character.player} travels to {game.environment.name} and encounters a {game.enemy.type}!"
-    )
-    print(
-        f"{game.enemy.type} attacks {game.character.player}! deals {game.enemy.damage} damage..."
-    )
-    game.character.hp -= game.enemy.damage
-
-    print(
-        f"{game.character.player} attacks {game.enemy.type}! Critical HIT! Deals {game.character.damage} damage * 2..."
-    )
-    game.enemy.hp -= game.character.damage * 2
-
-    print(f"Player HP: {game.character.hp} Enemy HP: {game.enemy.hp}")
-
-    print(f"{game.enemy.type} flees the battle!!!")
-
-    print(f"{game.enemy.type} drops his armour: {game.enemy.armour}..")
-
-    enemy_armour = f"{game.enemy.armour}"
-
-    character.add_attribute("inventory", enemy_armour, readonly=False)
-
-    print(f"Added the item to the Player Inventory.")
-
-    game_history.save()
-
-    water_environment = Originator(
-        name="Dramaid Ocean", biome="Ocean", size="Small", weather="Cold"
-    )
-
-    game.environment = water_environment
-
-    print(f"{game.character.player} travels to {game.environment.name}!")
-
-    game_history.undo()
-    print(f"Current Environment: {game.environment.name}")
-
-    game_history.redo()
-    print(f"Current Environment: {game.environment.name}")
 
 
 if __name__ == "__main__":
