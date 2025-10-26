@@ -33,12 +33,18 @@ class Adapter(Target):
 
         # overwrites keys from adaptee
         for key, value in adaptee_output.items():
-            new_key = f"Adapter {key}"
-            adapter_output[new_key] = self._adapter_data.get(key, value)
+            # if key only exists in adaptee: 
+            if key not in self._adapter_data:
+                legacy_key = f"[Legacy] {key}"
+                adapter_output[legacy_key] = value
+            # if key is exists in both - overwrite with adapter data
+            else:
+                new_key = f"[Adapter] {key}"
+                adapter_output[new_key] = self._adapter_data.get(key, value)
 
         # adds keys not in adaptee
         for key, value in self._adapter_data.items():
-            new_key = f"Adapter {key}"
+            new_key = f"[Adapter] {key}"
             if new_key not in adapter_output:
                 adapter_output[new_key] = value
 
@@ -50,11 +56,11 @@ class Adapter(Target):
         adapter_string = f"\n".join(f"{k} = {v}" for k, v in adapter_output.items())
         return (f"Adaptee:\n{adaptee_string}\n\nConverts To:\n\nAdapter:\n{adapter_string}")
 
-    def request(self):
+    def request(self, string_format: bool = True):
         """Transforms Adaptee functionality into something that can be used by the new interface"""
         adaptee_output = self._adaptee.specific_request()
         adapter_output = self._transform_data(adaptee_output)
-        return self._format_data(adaptee_output, adapter_output)
+        return self._format_data(adaptee_output, adapter_output) if string_format else adapter_output
 
 
 # adaptee (old interface) -- client has this (existing interface to legacy functionality)
@@ -71,19 +77,19 @@ class Adaptee:
 # client
 class Client:
     """Client Facing API - executes the desired functionality (which gets translated by Adapter)"""
-    def __init__(self, adapter: Target) -> None:
-        self._adapter = adapter
+    def __init__(self, target: Target) -> None:
+        self._target = target
 
-    def request(self):
+    def request(self, string_format: bool = True):
         """runs Adapter method (Which transforms Adaptee method)"""
-        return self._adapter.request()
+        return self._target.request(string_format=string_format)    # type: ignore
 
 
 # Main - Client Facing Code
 def main():
     old_interface = Adaptee(speed=25, timeframe="ancient")
-    new_interface = Adapter(old_interface, speed=100, era="modern")
-    print(Client(new_interface).request())
+    adapter = Adapter(old_interface, speed=100, era="modern")
+    print(Client(adapter).request(string_format=True))
 
 
 if __name__ == "__main__":

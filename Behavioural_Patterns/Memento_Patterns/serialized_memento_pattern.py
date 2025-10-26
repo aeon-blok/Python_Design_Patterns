@@ -139,11 +139,10 @@ class Originator(iOriginator):
         def _recursive_restore(snapshot, target):
             # Replace all attributes with the snapshot attributes via deepcopy. needed for nested objects
             for key, value in snapshot.__dict__.items():
-                # if originator object - calls function on it.
                 if isinstance(value, iOriginator):
-                    # ? checks existence and is Object. -applies recursive function
+                    # ? checks existence and is Originator Object. -applies recursive function
                     if hasattr(target, key) and isinstance(getattr(target, key), iOriginator):
-                        recursive_restore(value, getattr(target, key)) 
+                        _recursive_restore(value, getattr(target, key)) 
                     else:
                         setattr(target, key, copy.deepcopy(value)) # set attribute via deepcopy
                 else:
@@ -152,10 +151,6 @@ class Originator(iOriginator):
         self.__dict__.clear()  # Remove current attributes
         snapshot = memento.get_snapshot()  # retrieves memento
         _recursive_restore(snapshot, self) # runs recursive restore function
-
-        # Replace all attributes with the snapshot attributes via deepcopy. needed for nested objects
-        # for key, value in snapshot.__dict__.items():
-        #     setattr(self, key, copy.deepcopy(value))
 
 
 # Caretaker
